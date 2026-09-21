@@ -8,7 +8,7 @@ cask "sake" do
   homepage "https://github.com/typester/sake"
 
   depends_on arch: :arm64
-  depends_on macos: ">= :sequoia"
+  depends_on macos: :sequoia
 
   app "Sake.app"
 
