@@ -12,26 +12,17 @@ homebrew-sake/
 └── CLAUDE.md                          this file
 ```
 
-## How the cask gets updated
+## Nothing here decides anything
 
-Not by hand, normally. sake's `release.yml` builds the app, hashes the zip, and sends a
-`repository_dispatch` of type `update-cask` carrying `version` and `arm64_sha256`. The
-workflow here rewrites those two fields, checks that the url resolves, and commits as
-`sake {VERSION}`.
+sake's `release.yml` builds the app, hashes the zip, and sends a `repository_dispatch` of
+type `update-cask`. The workflow here rewrites the cask's `version` and `sha256`, checks
+that the url resolves, and commits as `sake {VERSION}`. If it ever has to be redone by
+hand, the same workflow takes a `workflow_dispatch` with the same two inputs.
 
-By hand, if that ever has to be redone: the same workflow takes `workflow_dispatch` with
-the same two inputs.
-
-## The url it builds
-
-- Tag: `v{VERSION}` — release-please makes it in sake's repository, nobody tags by hand
-- Asset: `https://github.com/typester/sake/releases/download/v{VERSION}/Sake-arm64-{VERSION}.zip`
-- arm64 only. sake needs Apple silicon, so there is no second architecture to carry.
-
-## Version numbers live in sake
-
-`VERSION` in sake's repository is the source, and release-please owns it. Nothing here
-decides a version; this repository only learns about one.
+Everything that decides something — the version, the tag, the name of the zip, how a
+release is cut at all — lives in `typester/sake`, and `docs/releasing.md` there is the file
+to read. **This repository goes long stretches untouched, so do not write anything here
+that the other one could go and change.**
 
 ## Testing
 
@@ -40,9 +31,6 @@ brew tap typester/sake
 brew info --cask sake
 brew audit --cask --no-online typester/sake/sake
 ```
-
-`--online` has not been run here: `brew audit` refuses to start on a machine whose Xcode is
-older than the one Homebrew wants.
 
 ## Code style
 

@@ -30,8 +30,9 @@ brew install --cask --no-quarantine sake
 - `Sake.app` in `/Applications`
 
 That is all. sake has no command line tool. On first run the app builds its own Wine engine,
-which needs the Xcode Command Line Tools, Apple's Game Porting Toolkit dmg — a free Apple ID
-is enough — and about 10 GB of disk.
+which takes a while and needs a few things of its own; [sake's README][sake] lists them.
+
+[sake]: https://github.com/typester/sake
 
 ## Uninstall
 
