@@ -1,6 +1,6 @@
 cask "sake" do
-  version "0.1.0"
-  sha256 "9078d266d948453af49f28f5fc24f32a6ef784ca38898cf9bcc8a36686645c9e"
+  version "0.1.1"
+  sha256 "0a38d6f6bd5c8c83092233fcccb2f91f93ecb157a25239825a059229562bcd15"
 
   url "https://github.com/typester/sake/releases/download/v#{version}/Sake-arm64-#{version}.zip"
   name "sake"
