@@ -1,0 +1,68 @@
+name: Update Cask
+
+on:
+  repository_dispatch:
+    types: [update-cask]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 0.1.0)'
+        required: true
+      arm64_sha256:
+        description: 'SHA256 of the arm64 zip'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    name: Update the cask
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Get inputs
+        id: inputs
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "version=${{ github.event.client_payload.version }}" >> "$GITHUB_OUTPUT"
+            echo "arm64_sha256=${{ github.event.client_payload.arm64_sha256 }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+            echo "arm64_sha256=${{ inputs.arm64_sha256 }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Both go into a sed pattern below, and the payload comes from another repository.
+      - name: Validate inputs
+        run: |
+          VERSION="${{ steps.inputs.outputs.version }}"
+          SHA="${{ steps.inputs.outputs.arm64_sha256 }}"
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+            echo "Invalid version: $VERSION" >&2; exit 1
+          fi
+          if ! echo "$SHA" | grep -qE '^[a-f0-9]{64}$'; then
+            echo "Invalid sha256" >&2; exit 1
+          fi
+
+      - name: Update the cask
+        run: |
+          VERSION="${{ steps.inputs.outputs.version }}"
+          SHA="${{ steps.inputs.outputs.arm64_sha256 }}"
+          sed -i "s/version \".*\"/version \"${VERSION}\"/" Casks/sake.rb
+          sed -i "s/sha256 \"[a-f0-9]*\"/sha256 \"${SHA}\"/" Casks/sake.rb
+
+      # A cask whose url cannot be fetched is a broken cask, so this fails rather than
+      # committing one. While typester/sake is private, every release asset is a 404 here.
+      - name: Verify the url is reachable
+        run: |
+          VERSION="${{ steps.inputs.outputs.version }}"
+          curl -sIf "https://github.com/typester/sake/releases/download/v${VERSION}/Sake-arm64-${VERSION}.zip" > /dev/null
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/sake.rb
+          git commit -m "sake ${{ steps.inputs.outputs.version }}"
+          git push
