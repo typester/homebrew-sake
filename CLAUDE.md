@@ -41,8 +41,8 @@ brew info --cask sake
 brew audit --cask --no-online typester/sake/sake
 ```
 
-`--online` fails while sake's repository is private, because the release asset it fetches
-is a 404 to anyone not signed in.
+`--online` has not been run here: `brew audit` refuses to start on a machine whose Xcode is
+older than the one Homebrew wants.
 
 ## Code style
 

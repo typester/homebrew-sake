@@ -3,10 +3,6 @@
 Homebrew tap for [sake](https://github.com/typester/sake), an open source macOS app for
 running Windows games on Apple silicon.
 
-**Not usable yet.** sake's repository is still private, so the release this cask points at
-cannot be downloaded and the version and checksum here are placeholders. Both are filled in
-by sake's release workflow the first time it publishes.
-
 ## Installation
 
 ```sh
